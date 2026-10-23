@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dreyfus Postcards</title>
+  <meta name="description" content="A map of postcards from the Dreyfus Affair (1894–1906).">
+
+  <!-- Leaflet: the mapping library. Pinned to an exact version so the site never changes underneath us. -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <h1>Dreyfus Postcards</h1>
+    <p>Postcards of the Dreyfus Affair, mapped by place.</p>
+  </header>
+
+  <main>
+    <div id="map" aria-label="Map of postcards"></div>
+  </main>
+
+  <footer class="site-footer">
+    <p><span id="count"></span> <a href="https://github.com/benliebersohn/dreyfus-cards">Source on GitHub</a></p>
+  </footer>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <!-- Papa Parse: reads the CSV spreadsheet export. -->
+  <script src="https://unpkg.com/papaparse@5.4.1/papaparse.min.js"></script>
+  <script src="js/map.js"></script>
+</body>
+</html>

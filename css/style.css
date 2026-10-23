@@ -1,0 +1,66 @@
+/* Basic layout: header on top, map fills the rest, small footer. */
+
+* { box-sizing: border-box; }
+
+html, body {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  font-family: Georgia, "Times New Roman", serif;
+  color: #222;
+  background: #f6f1e7; /* old-paper tone */
+}
+
+.site-header {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #d8cfbd;
+}
+
+.site-header h1 {
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.site-header p {
+  margin: 0.25rem 0 0;
+  color: #555;
+}
+
+main {
+  flex: 1;          /* map takes all remaining height */
+  min-height: 300px;
+}
+
+#map {
+  height: 100%;
+  width: 100%;
+}
+
+.site-footer {
+  padding: 0.5rem 1rem;
+  font-size: 0.85rem;
+  color: #555;
+  border-top: 1px solid #d8cfbd;
+}
+
+/* Popup contents */
+.card-popup h2 {
+  margin: 0 0 0.25rem;
+  font-size: 1rem;
+}
+
+.card-popup .meta {
+  margin: 0 0 0.5rem;
+  color: #666;
+  font-size: 0.85rem;
+}
+
+.card-popup img {
+  display: block;
+  max-width: 100%;
+  margin-bottom: 0.5rem;
+}
