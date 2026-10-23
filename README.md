@@ -1,6 +1,6 @@
 ﻿# Dreyfus Postcards
 
-A web map of postcards from the Dreyfus Affair (1894â€“1906), built with [Leaflet](https://leafletjs.com/) and hosted on GitHub Pages.
+A web map of postcards from the Dreyfus Affair (1894–1906), built with [Leaflet](https://leafletjs.com/) and hosted on GitHub Pages.
 
 ## How it works
 
@@ -43,5 +43,5 @@ Then open <http://localhost:8000>. (Or use the VS Code "Live Server" extension.)
 
 ## Publish
 
-GitHub repo â†’ **Settings â†’ Pages** â†’ Source: *Deploy from a branch*, Branch: `main`, folder `/ (root)`.
+GitHub repo → **Settings → Pages** → Source: *Deploy from a branch*, Branch: `main`, folder `/ (root)`.
 The site appears at <https://benliebersohn.github.io/dreyfus-postcards/>.
