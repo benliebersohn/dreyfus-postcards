@@ -48,6 +48,44 @@ main {
 }
 
 /* Popup contents */
+.leaflet-popup-content {
+  max-height: 50vh;
+  overflow-y: auto;  /* busy places (Paris) list many cards */
+}
+
+.place-name {
+  margin: 0 0 0.5rem;
+  font-size: 1.1rem;
+}
+
+.card-list h3 {
+  margin: 0.5rem 0;
+  font-size: 0.95rem;
+  border-bottom: 1px solid #d8cfbd;
+}
+
+.card-popup {
+  margin-bottom: 0.75rem;
+}
+
+.card-popup h4 {
+  margin: 0 0 0.25rem;
+  font-size: 0.95rem;
+}
+
+.card-popup .id {
+  font-weight: normal;
+  color: #888;
+  font-size: 0.8rem;
+}
+
+.card-popup blockquote {
+  margin: 0.25rem 0 0;
+  padding-left: 0.5rem;
+  border-left: 3px solid #d8cfbd;
+  font-style: italic;
+}
+
 .card-popup h2 {
   margin: 0 0 0.25rem;
   font-size: 1rem;

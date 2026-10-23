@@ -1,0 +1,24 @@
+place,lat,lon,note
+Paris,48.8566,2.3522,
+Bayen (Bayon) Meurthe-et-Moselle,48.4778,6.3161,Bayon
+Bayen,48.4778,6.3161,Bayon
+Bourges,47.0810,2.3988,
+Silly (Oise),49.1078,2.7889,APPROXIMATE: assumed Silly-le-Long; could be Silly-Tillard
+Belgique,50.8503,4.3517,APPROXIMATE: country only; placed at Brussels
+Bruxelles,50.8503,4.3517,
+Avallon (Yonne),47.4900,3.9078,
+Saint-Nicolas-de-Port (Meurthe et Moselle),48.6336,6.2989,
+Limoges,45.8336,1.2611,
+Metz,49.1193,6.1757,
+Lure,47.6836,6.4967,
+Markirch (Alsace),48.2467,7.1833,Sainte-Marie-aux-Mines
+Dijon,47.3220,5.0415,
+Salins (Jura),46.9386,5.8789,Salins-les-Bains
+Lausanne (Suisse),46.5197,6.6323,
+Gard,44.0,4.2,"APPROXIMATE: department only (address ""Saint André""); placed mid-Gard"
+Seine et Oise,48.6939,1.8550,"APPROXIMATE: address ""Saint Hubert""; assumed Saint-Hubert, Le Perray-en-Yvelines"
+Ménil aux Bois,48.80,5.50,APPROXIMATE: Ménil-aux-Bois (Meuse)
+Germany,54.3520,18.6466,"APPROXIMATE: address ""Westprussia""; placed at Danzig (Gdańsk)"
+Gand (Belgium),51.0543,3.7174,Ghent
+Gemozac,45.5689,-0.6744,Gémozac
+Le Havre,49.4944,0.1079,
