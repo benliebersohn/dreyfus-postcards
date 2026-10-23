@@ -10,7 +10,10 @@ There is no build step. The site is plain HTML, CSS, and JavaScript:
 |---|---|
 | `index.html` | The page itself; loads Leaflet, Papa Parse, and our code |
 | `css/style.css` | Layout and look |
-| `js/map.js` | Creates the map, reads the CSVs, draws origin → destination routes |
+| `js/main.js` | Starts everything; keeps the search, filters and selected card in sync |
+| `js/data.js` | Reads the CSVs and prepares each card (dates, keywords, search text) |
+| `js/map.js` | Draws origin → destination routes and place dots; highlighting |
+| `js/panel.js` | Side panel: search box, filters, card list and full card record |
 | `data/Dreyfus_OD_table.csv` | **The data.** One row per postcard (spreadsheet export) |
 | `data/places.csv` | Coordinates for every place name used in Origin / Destination |
 | `images/` | Postcard scans (optional) |
@@ -32,6 +35,12 @@ Origin/Destination columns (matching ignores capitals and extra spaces):
 
 A card whose Origin or Destination isn't in `places.csv` is skipped, with a warning in the browser
 console naming the missing place. When you add new cards with new places, add a row here.
+
+## Linking to a card
+
+Every card has its own address: add `#` and its ID to the page URL, e.g.
+`https://benliebersohn.github.io/dreyfus-postcards/#KM-008`. The panel's
+"Copy link to this card" button copies it.
 
 ## Run locally
 

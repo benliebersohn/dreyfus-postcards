@@ -17,6 +17,8 @@
   </header>
 
   <main>
+    <!-- Search, filters and the card list; filled in by js/panel.js -->
+    <aside id="panel" aria-label="Browse the postcards"></aside>
     <div id="map" aria-label="Map of postcards"></div>
   </main>
 
@@ -27,6 +29,7 @@
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <!-- Papa Parse: reads the CSV spreadsheet export. -->
   <script src="https://unpkg.com/papaparse@5.4.1/papaparse.min.js"></script>
-  <script src="js/map.js"></script>
+  <!-- Our code, split into modules (js/main.js loads the others). -->
+  <script type="module" src="js/main.js"></script>
 </body>
 </html>

@@ -1,6 +1,15 @@
-/* Basic layout: header on top, map fills the rest, small footer. */
+/* Basic layout: header on top, panel + map fill the rest, small footer. */
 
 * { box-sizing: border-box; }
+
+:root {
+  --paper: #f6f1e7;      /* old-paper tone */
+  --paper-dark: #ece4d3;
+  --line: #d8cfbd;
+  --ink: #222;
+  --muted: #666;
+  --accent: #8b2e1f;     /* same red as the map routes */
+}
 
 html, body {
   height: 100%;
@@ -11,13 +20,13 @@ body {
   display: flex;
   flex-direction: column;
   font-family: Georgia, "Times New Roman", serif;
-  color: #222;
-  background: #f6f1e7; /* old-paper tone */
+  color: var(--ink);
+  background: var(--paper);
 }
 
 .site-header {
   padding: 0.75rem 1rem;
-  border-bottom: 1px solid #d8cfbd;
+  border-bottom: 1px solid var(--line);
 }
 
 .site-header h1 {
@@ -31,23 +40,244 @@ body {
 }
 
 main {
-  flex: 1;          /* map takes all remaining height */
-  min-height: 300px;
+  flex: 1;          /* panel + map take all remaining height */
+  min-height: 0;    /* lets the panel scroll inside instead of growing the page */
+  display: flex;
+}
+
+#panel {
+  width: 380px;
+  flex: none;
+  overflow-y: auto;
+  border-right: 1px solid var(--line);
 }
 
 #map {
-  height: 100%;
-  width: 100%;
+  flex: 1;
+  min-height: 300px;
 }
 
 .site-footer {
   padding: 0.5rem 1rem;
   font-size: 0.85rem;
   color: #555;
-  border-top: 1px solid #d8cfbd;
+  border-top: 1px solid var(--line);
 }
 
-/* Popup contents */
+button {
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* ---- Panel: search ---- */
+
+.panel-search {
+  position: sticky;   /* search stays visible while the list scrolls */
+  top: 0;
+  z-index: 1;
+  padding: 0.75rem 1rem;
+  background: var(--paper);
+  border-bottom: 1px solid var(--line);
+}
+
+.panel-search input {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  font: inherit;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  background: #fff;
+}
+
+.panel-search input:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: -1px;
+}
+
+/* ---- Panel: filters ---- */
+
+.facets {
+  padding: 0.25rem 1rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.facet summary {
+  padding: 0.4rem 0;
+  font-size: 0.85rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #555;
+  cursor: pointer;
+}
+
+.facet-active {
+  font-weight: normal;
+  text-transform: none;
+  color: var(--accent);
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  padding-bottom: 0.6rem;
+}
+
+.chip {
+  padding: 0.2rem 0.6rem;
+  font-size: 0.85rem;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: #fff;
+}
+
+.chip:hover:not(:disabled) {
+  border-color: var(--accent);
+}
+
+.chip[aria-pressed="true"] {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+.chip:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.chip .n {
+  margin-left: 0.15rem;
+  font-size: 0.75rem;
+  opacity: 0.7;
+}
+
+.chip.small {
+  font-size: 0.75rem;
+}
+
+.more, .clear-filters, .copy-link {
+  padding: 0;
+  border: none;
+  background: none;
+  font-size: 0.85rem;
+  color: var(--accent);
+  text-decoration: underline;
+}
+
+/* ---- Panel: card list ---- */
+
+.panel-status {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.5rem 1rem;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.cards {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.card-item {
+  border-top: 1px solid var(--line);
+  border-left: 4px solid transparent;
+}
+
+.card-item.hot {
+  background: var(--paper-dark);
+  border-left-color: var(--accent);
+}
+
+.card-item.selected {
+  background: #fff;
+  border-left-color: var(--accent);
+}
+
+.card-summary {
+  display: block;
+  width: 100%;
+  padding: 0.6rem 1rem 0.6rem 0.75rem;
+  text-align: left;
+  border: none;
+  background: none;
+}
+
+.card-summary > span {
+  display: block;
+}
+
+.card-meta, .card-route {
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.card-title {
+  margin: 0.1rem 0;
+  font-weight: bold;
+}
+
+.card-excerpt {
+  margin-top: 0.25rem;
+  font-size: 0.85rem;
+  font-style: italic;
+  color: #444;
+}
+
+.card-detail {
+  padding: 0 1rem 1rem 0.75rem;
+}
+
+.card-detail blockquote {
+  margin: 0 0 0.75rem;
+  padding: 0.5rem 0.75rem;
+  border-left: 3px solid var(--line);
+  background: var(--paper);
+  font-style: italic;
+  line-height: 1.5;
+}
+
+.card-detail dl {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.25rem 0.75rem;
+  margin: 0 0 0.75rem;
+  font-size: 0.85rem;
+}
+
+.card-detail dt {
+  color: var(--muted);
+}
+
+.card-detail dd {
+  margin: 0;
+}
+
+.card-detail .sub {
+  display: block;
+  color: var(--muted);
+}
+
+.empty {
+  padding: 1rem;
+  color: var(--muted);
+}
+
+/* ---- Map popups (short previews; full record is in the panel) ---- */
+
 .leaflet-popup-content {
   max-height: 50vh;
   overflow-y: auto;  /* busy places (Paris) list many cards */
@@ -61,44 +291,51 @@ main {
 .card-list h3 {
   margin: 0.5rem 0;
   font-size: 0.95rem;
-  border-bottom: 1px solid #d8cfbd;
+  border-bottom: 1px solid var(--line);
 }
 
-.card-popup {
-  margin-bottom: 0.75rem;
+.card-list ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
 
-.card-popup h4 {
-  margin: 0 0 0.25rem;
-  font-size: 0.95rem;
+.card-list li {
+  margin-bottom: 0.5rem;
 }
 
-.card-popup .id {
-  font-weight: normal;
-  color: #888;
+.card-list a {
+  color: var(--accent);
+  font-weight: bold;
+}
+
+.card-list .meta {
+  display: block;
+  color: var(--muted);
   font-size: 0.8rem;
 }
 
-.card-popup blockquote {
-  margin: 0.25rem 0 0;
-  padding-left: 0.5rem;
-  border-left: 3px solid #d8cfbd;
-  font-style: italic;
-}
+/* ---- Phones: map on top, panel scrolls below ---- */
 
-.card-popup h2 {
-  margin: 0 0 0.25rem;
-  font-size: 1rem;
-}
+@media (max-width: 700px) {
+  /* The whole page scrolls, so the card list gets the full screen below the map. */
+  html, body {
+    height: auto;
+  }
 
-.card-popup .meta {
-  margin: 0 0 0.5rem;
-  color: #666;
-  font-size: 0.85rem;
-}
+  main {
+    flex-direction: column-reverse;  /* panel comes first in the HTML, so flip it */
+  }
 
-.card-popup img {
-  display: block;
-  max-width: 100%;
-  margin-bottom: 0.5rem;
+  #map {
+    flex: none;
+    height: 50vh;
+  }
+
+  #panel {
+    width: auto;
+    overflow-y: visible;
+    border-right: none;
+    border-top: 1px solid var(--line);
+  }
 }
