@@ -5,13 +5,14 @@
 import { loadData, fold } from './data.js';
 import { createMap } from './map.js';
 import { createPanel } from './panel.js';
+import { getLang, setLang, t, translatePage } from './i18n.js';
 
 // The filters shown in the panel. `values` says which filter values a card has.
 const FACETS = [
-  { key: 'affiliation', label: 'Political affiliation', open: true, values: (c) => [c.affiliation] },
-  { key: 'event', label: 'Political event', open: true, values: (c) => [c.event] },
-  { key: 'year', label: 'Year', open: true, values: (c) => [c.year] },
-  { key: 'keyword', label: 'Keywords', open: false, values: (c) => c.keywords }
+  { key: 'affiliation', labelKey: 'facetAffiliation', open: true, values: (c) => [c.affiliation] },
+  { key: 'event', labelKey: 'facetEvent', open: true, values: (c) => [c.event] },
+  { key: 'year', labelKey: 'facetYear', open: true, values: (c) => [c.year] },
+  { key: 'keyword', labelKey: 'facetKeyword', open: false, values: (c) => c.keywords }
 ];
 
 const state = {
@@ -25,8 +26,9 @@ let cards = [];
 let total = 0;
 let keywordLabels = new Map();
 let visibleIds = new Set();
+let loadError = null;
 
-const mapView = createMap('map', { onHover: setHovered });
+const mapView = createMap('map', { lang: getLang(), onHover: setHovered });
 const panel = createPanel(document.getElementById('panel'), {
   facets: FACETS,
   onQuery: (text) => { state.query = text; update({ fit: true }); },
@@ -40,10 +42,14 @@ const panel = createPanel(document.getElementById('panel'), {
   onHover: setHovered
 });
 
+const langButton = document.getElementById('lang-switch');
+langButton.addEventListener('click', () => switchLanguage(getLang() === 'en' ? 'fr' : 'en'));
+applyLanguage();
+
 loadData()
   .then((data) => {
     ({ cards, total, keywordLabels } = data);
-    document.getElementById('count').textContent = `${cards.length} of ${total} postcards mapped.`;
+    showCount();
     update({ fit: true });
     // A link like index.html#KM-008 opens that card; popup links work the same way.
     selectFromHash();
@@ -52,10 +58,37 @@ loadData()
   .catch((err) => {
     // Show the problem on the page, not just in the console.
     console.error(err);
-    document.getElementById('count').textContent =
-      `Could not load the postcard data (${err.message || err}). ` +
-      (location.protocol === 'file:' ? 'Open the page through a local server, not as a file. ' : '');
+    loadError = err;
+    showCount();
   });
+
+// English <-> French: the interface text and the basemap change; the postcard
+// texts themselves stay in their original language.
+function switchLanguage(lang) {
+  setLang(lang);
+  mapView.setLanguage(lang);
+  applyLanguage();
+  update(); // redraw the list and popups with the new labels
+}
+
+function applyLanguage() {
+  translatePage();
+  document.title = t('title');
+  langButton.textContent = t('switchTo');
+  langButton.setAttribute('aria-label', t('switchLabel'));
+  langButton.lang = getLang() === 'en' ? 'fr' : 'en'; // the button names the *other* language
+  showCount();
+}
+
+function showCount() {
+  const count = document.getElementById('count');
+  if (loadError) {
+    count.textContent = t('loadError', loadError.message || loadError) +
+      (location.protocol === 'file:' ? t('useServer') : '');
+  } else {
+    count.textContent = cards.length ? t('mappedCount', cards.length, total) : '';
+  }
+}
 
 // Does this card pass the search and every filter (optionally ignoring one filter)?
 function matches(card, ignoreFacet) {

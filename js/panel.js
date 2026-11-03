@@ -3,27 +3,29 @@
 // what happens next.
 
 import { escapeHtml } from './data.js';
+import { t, formatDate } from './i18n.js';
 
 const KEYWORDS_SHOWN = 10; // keyword filters shown before "Show all"
 
 export function createPanel(el, { facets, onQuery, onToggleFacet, onClear, onSelect, onHover }) {
   // Build the parts that never change once, so typing and open/closed filter
-  // sections aren't reset each time the list updates.
+  // sections aren't reset each time the list updates. Their text is filled in
+  // (and re-filled on a language switch) by translatePage in i18n.js.
   el.innerHTML = `
     <div class="panel-search">
-      <label for="search" class="visually-hidden">Search the postcards</label>
-      <input type="search" id="search" placeholder="Search texts, names, places…" autocomplete="off">
+      <label for="search" class="visually-hidden" data-i18n="searchLabel"></label>
+      <input type="search" id="search" data-i18n-placeholder="searchPlaceholder" autocomplete="off">
     </div>
     <div class="facets">
       ${facets.map((f) => `
         <details class="facet" data-facet="${f.key}" ${f.open ? 'open' : ''}>
-          <summary>${escapeHtml(f.label)} <span class="facet-active"></span></summary>
+          <summary><span data-i18n="${f.labelKey}"></span> <span class="facet-active"></span></summary>
           <div class="chips"></div>
         </details>`).join('')}
     </div>
     <div class="panel-status" aria-live="polite">
       <span class="result-count"></span>
-      <button type="button" class="clear-filters" hidden>Clear filters</button>
+      <button type="button" class="clear-filters" data-i18n="clearFilters" hidden></button>
     </div>
     <ul class="cards"></ul>`;
 
@@ -73,17 +75,17 @@ export function createPanel(el, { facets, onQuery, onToggleFacet, onClear, onSel
     facets.forEach((facet) => {
       const section = el.querySelector(`.facet[data-facet="${facet.key}"]`);
       const selected = selection[facet.key];
-      section.querySelector('.facet-active').textContent = selected.size ? `· ${selected.size} selected` : '';
+      section.querySelector('.facet-active').textContent = selected.size ? t('selected', selected.size) : '';
       section.querySelector('.chips').innerHTML = chipsHtml(facet, counts[facet.key], selected, expanded.has(facet.key), labelFor);
     });
 
     const filtering = query.trim() || Object.values(selection).some((s) => s.size);
-    status.textContent = `${cards.length} of ${total} postcards`;
+    status.textContent = t('resultCount', cards.length, total);
     clearButton.hidden = !filtering;
 
     list.innerHTML = cards.length
       ? cards.map((card) => cardHtml(card, card.id === selectedId, selection, labelFor)).join('')
-      : '<li class="empty">No postcards match. Try fewer filters or a different search.</li>';
+      : `<li class="empty">${t('noMatches')}</li>`;
   }
 
   function highlight(ids) {
@@ -116,7 +118,7 @@ function chipsHtml(facet, counts, selected, showAll, labelFor) {
   }).join('');
 
   const more = values.length > KEYWORDS_SHOWN && facet.key === 'keyword'
-    ? `<button type="button" class="more" data-more="${facet.key}">${showAll ? 'Show fewer' : `Show all ${values.length}`}</button>`
+    ? `<button type="button" class="more" data-more="${facet.key}">${showAll ? t('showFewer') : t('showAll', values.length)}</button>`
     : '';
   return chips + more;
 }
@@ -131,7 +133,7 @@ function cardHtml(card, isSelected, selection, labelFor) {
   return `
     <li class="card-item${isSelected ? ' selected' : ''}" data-id="${escapeHtml(card.id)}">
       <button type="button" class="card-summary" data-select="${escapeHtml(card.id)}" aria-expanded="${isSelected}">
-        <span class="card-meta">${escapeHtml(card.id)} · ${escapeHtml(card.displayDate)}</span>
+        <span class="card-meta">${escapeHtml(card.id)} · ${escapeHtml(formatDate(card.dateParts))}</span>
         <span class="card-title">${escapeHtml(card.caption)}</span>
         <span class="card-route">${escapeHtml(card.origin)} → ${escapeHtml(card.destination)}</span>
         ${excerpt && !isSelected ? `<span class="card-excerpt" lang="fr">“${escapeHtml(excerpt)}”</span>` : ''}
@@ -143,13 +145,13 @@ function cardHtml(card, isSelected, selection, labelFor) {
 function detailHtml(card, selection, labelFor) {
   const where = (...parts) => parts.filter((p) => p && p !== 'Unknown').join(', ');
   const fields = [
-    ['From', card.sender, where(card.postageAddress, card.origin)],
-    ['To', card.recipient, where(card.address, card.destination)],
-    ['Affiliation', card.affiliation],
-    ['Event', card.event],
-    ['Medium', card.medium],
-    ['Publisher', card.publisher],
-    ['Collection', card.institution]
+    [t('from'), card.sender, where(card.postageAddress, card.origin)],
+    [t('to'), card.recipient, where(card.address, card.destination)],
+    [t('affiliation'), card.affiliation],
+    [t('event'), card.event],
+    [t('medium'), card.medium],
+    [t('publisher'), card.publisher],
+    [t('collection'), card.institution]
   ].filter(([, value]) => value && value !== 'Unknown');
 
   const keywords = card.keywords.map((key) => `
@@ -165,13 +167,13 @@ function detailHtml(card, selection, labelFor) {
           <dd>${escapeHtml(value)}${sub ? `<span class="sub">${escapeHtml(sub)}</span>` : ''}</dd>`).join('')}
       </dl>
       ${keywords ? `<div class="chips">${keywords}</div>` : ''}
-      <button type="button" class="copy-link" data-copy="${escapeHtml(card.id)}">Copy link to this card</button>
+      <button type="button" class="copy-link" data-copy="${escapeHtml(card.id)}">${t('copyLink')}</button>
     </div>`;
 }
 
 function copyLink(button) {
   navigator.clipboard.writeText(location.href).then(() => {
-    button.textContent = 'Link copied';
-    setTimeout(() => { button.textContent = 'Copy link to this card'; }, 1500);
+    button.textContent = t('linkCopied');
+    setTimeout(() => { button.textContent = t('copyLink'); }, 1500);
   });
 }

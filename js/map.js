@@ -3,21 +3,39 @@
 // the routes and dots that belong to particular cards.
 
 import { escapeHtml } from './data.js';
+import { t, formatDate } from './i18n.js';
+
+const OSM_CREDIT = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
+
+// Background map tiles for each interface language.
+const BASEMAPS = {
+  en: {
+    url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+    attribution: OSM_CREDIT
+  },  
+  fr: {
+    url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+    attribution: OSM_CREDIT
+  }
+};
 
 const ROUTE_STYLE = { color: '#8b2e1f', opacity: 0.45 };
 const ROUTE_HOT = { color: '#5a140a', opacity: 1 };
 const DOT_STYLE = { color: '#3b2f1e', fillColor: '#d9a441' };
 const DOT_HOT = { color: '#5a140a', fillColor: '#8b2e1f' };
 
-export function createMap(elementId, { onHover }) {
+export function createMap(elementId, { lang, onHover }) {
   // Create the map, centered on France.
   const map = L.map(elementId).setView([46.6, 2.5], 6);
 
-  // Base layer (the background map tiles).
-  L.tileLayer('https://a.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png', {
-    maxZoom: 18,
-    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://www.openstreetmap.fr/">OpenStreetMap France</a>'
-  }).addTo(map);
+  // Base layer (the background map tiles), swapped by setLanguage.
+  let basemap = null;
+  function setLanguage(next) {
+    if (basemap) basemap.remove();             ////// This turns on the map being able to change languages
+    const { url, attribution } = BASEMAPS[next];
+    basemap = L.tileLayer(url, { maxZoom: 18, attribution }).addTo(map);
+  }
+  setLanguage(lang);
 
   const layers = L.layerGroup().addTo(map);
   let routes = [];  // { line, hitLine, ids, count }
@@ -64,8 +82,8 @@ export function createMap(elementId, { onHover }) {
         fillOpacity: 0.9
       }).bindPopup(
         `<h2 class="place-name">${escapeHtml(place.name)}</h2>` +
-        (sent.length ? previewHtml(`Sent from here (${sent.length})`, sent) : '') +
-        (received.length ? previewHtml(`Sent to here (${received.length})`, received) : '')
+        (sent.length ? previewHtml(t('sentFrom', sent.length), sent) : '') +
+        (received.length ? previewHtml(t('sentTo', received.length), received) : '')
       );
       dot.on('mouseover', () => onHover(ids));
       dot.on('mouseout', () => onHover([]));
@@ -103,7 +121,7 @@ export function createMap(elementId, { onHover }) {
     }
   }
 
-  return { show, highlight, focus };
+  return { show, highlight, focus, setLanguage };
 }
 
 // Short popup list; each card links to its full record in the side panel.
@@ -111,7 +129,7 @@ function previewHtml(heading, cards) {
   const items = cards.map((card) => `
     <li>
       <a href="#${encodeURIComponent(card.id)}">${escapeHtml(card.caption)}</a>
-      <span class="meta">${escapeHtml(card.displayDate)} · ${escapeHtml(card.sender)} → ${escapeHtml(card.recipient)}</span>
+      <span class="meta">${escapeHtml(formatDate(card.dateParts))} · ${escapeHtml(card.sender)} → ${escapeHtml(card.recipient)}</span>
     </li>`).join('');
   return `<div class="card-list"><h3>${escapeHtml(heading)}</h3><ul>${items}</ul></div>`;
 }
