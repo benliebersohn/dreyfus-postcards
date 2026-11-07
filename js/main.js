@@ -5,7 +5,7 @@
 import { loadData, fold } from './data.js';
 import { createMap } from './map.js';
 import { createPanel } from './panel.js';
-import { getLang, setLang, t, translatePage } from './i18n.js';
+import { getLang, t, setupLanguageSwitch } from './i18n.js';
 
 // The filters shown in the panel. `values` says which filter values a card has.
 const FACETS = [
@@ -42,9 +42,7 @@ const panel = createPanel(document.getElementById('panel'), {
   onHover: setHovered
 });
 
-const langButton = document.getElementById('lang-switch');
-langButton.addEventListener('click', () => switchLanguage(getLang() === 'en' ? 'fr' : 'en'));
-applyLanguage();
+setupLanguageSwitch(document.getElementById('lang-switch'), switchLanguage);
 
 loadData()
   .then((data) => {
@@ -65,19 +63,9 @@ loadData()
 // English <-> French: the interface text and the basemap change; the postcard
 // texts themselves stay in their original language.
 function switchLanguage(lang) {
-  setLang(lang);
   mapView.setLanguage(lang);
-  applyLanguage();
-  update(); // redraw the list and popups with the new labels
-}
-
-function applyLanguage() {
-  translatePage();
-  document.title = t('title');
-  langButton.textContent = t('switchTo');
-  langButton.setAttribute('aria-label', t('switchLabel'));
-  langButton.lang = getLang() === 'en' ? 'fr' : 'en'; // the button names the *other* language
   showCount();
+  update(); // redraw the list and popups with the new labels
 }
 
 function showCount() {

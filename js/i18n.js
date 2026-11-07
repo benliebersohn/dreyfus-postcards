@@ -5,6 +5,9 @@
 const STRINGS = {
   en: {
     title: 'Dreyfus Postcards',
+    aboutTitle: 'About · Dreyfus Postcards',
+    navMap: 'Map',
+    navAbout: 'About',
     tagline: 'Postcards of the Dreyfus Affair, mapped by origin and destination.',
     switchTo: 'Français',
     switchLabel: 'Afficher le site en français',
@@ -40,6 +43,9 @@ const STRINGS = {
   },
   fr: {
     title: 'Cartes postales de l’affaire Dreyfus',
+    aboutTitle: 'À propos · Cartes postales de l’affaire Dreyfus',
+    navMap: 'Carte',
+    navAbout: 'À propos',
     tagline: 'Cartes postales de l’affaire Dreyfus, cartographiées par origine et destination.',
     switchTo: 'English',
     switchLabel: 'Show the site in English',
@@ -102,6 +108,23 @@ export function translatePage(root = document) {
   root.querySelectorAll('[data-i18n]').forEach((el) => { el.textContent = t(el.dataset.i18n); });
   root.querySelectorAll('[data-i18n-placeholder]').forEach((el) => { el.placeholder = t(el.dataset.i18nPlaceholder); });
   root.querySelectorAll('[data-i18n-label]').forEach((el) => { el.setAttribute('aria-label', t(el.dataset.i18nLabel)); });
+}
+
+// Wire up the header's English/French button: label it with the other
+// language, translate the page, and call onChange(lang) after each switch.
+export function setupLanguageSwitch(button, onChange = () => {}) {
+  function apply() {
+    translatePage();
+    button.textContent = t('switchTo');
+    button.setAttribute('aria-label', t('switchLabel'));
+    button.lang = lang === 'en' ? 'fr' : 'en'; // the button names the *other* language
+  }
+  button.addEventListener('click', () => {
+    setLang(lang === 'en' ? 'fr' : 'en');
+    apply();
+    onChange(lang);
+  });
+  apply();
 }
 
 // A card's date in the current language: "22 Sept 1899" / "22 sept. 1899".

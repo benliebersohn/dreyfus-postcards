@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Dreyfus Postcards</title>
+  <title data-i18n="title">Dreyfus Postcards</title>
   <meta name="description" content="A map of postcards from the Dreyfus Affair (1894–1906).">
 
   <!-- Leaflet: the mapping library. Pinned to an exact version so the site never changes underneath us. -->
@@ -16,8 +16,12 @@
       <h1 data-i18n="title">Dreyfus Postcards</h1>
       <p data-i18n="tagline">Postcards of the Dreyfus Affair, mapped by origin and destination.</p>
     </div>
-    <!-- Switches the interface text and the basemap between English and French; see js/i18n.js -->
-    <button type="button" id="lang-switch" class="lang-switch"></button>
+    <nav class="site-nav">
+      <a href="index.html" aria-current="page" data-i18n="navMap">Map</a>
+      <a href="about.html" data-i18n="navAbout">About</a>
+      <!-- Switches the interface text and the basemap between English and French; see js/i18n.js -->
+      <button type="button" id="lang-switch" class="lang-switch"></button>
+    </nav>
   </header>
 
   <main>

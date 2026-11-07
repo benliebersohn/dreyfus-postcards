@@ -9,11 +9,14 @@ There is no build step. The site is plain HTML, CSS, and JavaScript:
 | File | What it does |
 |---|---|
 | `index.html` | The page itself; loads Leaflet, Papa Parse, and our code |
+| `about.html` | About page: project statement and credits, written out in English and French |
 | `css/style.css` | Layout and look |
 | `js/main.js` | Starts everything; keeps the search, filters and selected card in sync |
 | `js/data.js` | Reads the CSVs and prepares each card (dates, keywords, search text) |
 | `js/map.js` | Draws origin → destination routes and place dots; highlighting |
 | `js/panel.js` | Side panel: search box, filters, card list and full card record |
+| `js/i18n.js` | English/French interface text and the language switch button |
+| `js/about.js` | About page: shows the article in the current language |
 | `data/Dreyfus_OD_table.csv` | **The data.** One row per postcard (spreadsheet export) |
 | `data/places.csv` | Coordinates for every place name used in Origin / Destination |
 | `images/` | Postcard scans (optional) |

@@ -28,13 +28,31 @@ body {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
+  flex-wrap: wrap;  /* nav drops below the title on narrow screens */
   gap: 1rem;
   padding: 0.75rem 1rem;
   border-bottom: 1px solid var(--line);
 }
 
-.lang-switch {
+.site-nav {
+  display: flex;
   flex-shrink: 0;
+  align-items: center;
+  gap: 1rem;
+}
+
+.site-nav a {
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.site-nav a:hover,
+.site-nav a[aria-current="page"] {
+  color: var(--accent);
+  text-decoration: underline;
+}
+
+.lang-switch {
   padding: 0.3rem 0.75rem;
   background: var(--paper);
   border: 1px solid var(--line);
@@ -44,6 +62,11 @@ body {
 .lang-switch:hover {
   border-color: var(--accent);
   color: var(--accent);
+}
+
+.site-title {
+  flex: 1 1 20rem;  /* takes the spare width, but may shrink so long titles wrap */
+  min-width: 0;
 }
 
 .site-header h1 {
@@ -355,4 +378,40 @@ button {
     border-right: none;
     border-top: 1px solid var(--line);
   }
+}
+
+/* ---- About page ---- */
+
+main.about {
+  display: block;     /* one scrolling column instead of panel + map */
+  overflow-y: auto;
+}
+
+.about article {
+  max-width: 42rem;
+  margin: 0 auto;
+  padding: 1.5rem 1rem 3rem;
+  line-height: 1.6;
+}
+
+.about h2 {
+  margin: 2rem 0 0.5rem;
+  font-size: 1.25rem;
+}
+
+.about article > :first-child {
+  margin-top: 0;
+}
+
+.about a {
+  color: var(--accent);
+}
+
+.credits dt {
+  margin-top: 0.75rem;
+  font-weight: bold;
+}
+
+.credits dd {
+  margin: 0;
 }
