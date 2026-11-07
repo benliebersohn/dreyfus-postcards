@@ -355,6 +355,90 @@ button {
   font-size: 0.8rem;
 }
 
+/* Thumbnail of the front in map popups; removed when a card has no scan. */
+.card-list li {
+  display: flow-root;   /* contain the floated thumbnail */
+}
+
+.popup-thumb {
+  float: left;
+  width: 48px;
+  height: 48px;
+  margin: 0 0.5rem 0.25rem 0;
+  object-fit: cover;
+  border: 1px solid var(--line);
+}
+
+/* ---- Postcard scans ---- */
+
+.scan {
+  margin: 0 0 1rem;
+}
+
+.scan-zoom {
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 1px solid var(--line);
+  background: var(--paper-dark);
+  cursor: zoom-in;
+}
+
+.scan img {
+  display: block;
+  width: 100%;
+  max-height: 22rem;
+  object-fit: contain;
+}
+
+/* Only the side named in data-side is shown. */
+.scan[data-side="front"] img[data-side="back"],
+.scan[data-side="back"] img[data-side="front"] {
+  display: none;
+}
+
+.scan-sides {
+  display: flex;
+  gap: 0.4rem;
+  margin-top: 0.4rem;
+}
+
+.scan-viewer {
+  max-width: 95vw;
+  max-height: 95vh;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  overflow: visible;
+}
+
+.scan-viewer::backdrop {
+  background: rgba(20, 15, 10, 0.85);
+}
+
+.scan-viewer img {
+  display: block;
+  max-width: 95vw;
+  max-height: calc(95vh - 3rem);  /* leave room for the buttons below */
+  margin: 0 auto;
+}
+
+.scan-viewer-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 0.5rem;
+}
+
+.scan-viewer-close {
+  margin-left: auto;
+  padding: 0.3rem 0.75rem;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+}
+
 /* ---- Phones: map on top, panel scrolls below ---- */
 
 @media (max-width: 700px) {

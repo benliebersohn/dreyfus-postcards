@@ -85,6 +85,7 @@ function prepareCard(row, from, to) {
     from,
     to,
     routeKey: `${from.key}|${to.key}`,
+    ...scanPaths(clean(row['Name/ID'])),
     ...cardDate(row)
   };
   card.searchText = fold([
@@ -106,6 +107,18 @@ function cardDate(row) {
   const pad = (n) => String(n).padStart(2, '0');
   const sortDate = [year, month && pad(month), month && day && pad(day)].filter(Boolean).join('-');
   return { sortDate, dateParts };
+}
+
+// Scans are found by card ID, with the hyphen as an underscore: card KM-008
+// -> KM_008.jpg (front) and KM_008_verso.jpg (back, if there is one). These
+// are the resized copies made by scripts/resize_scans.py. A missing file
+// just isn't shown.
+function scanPaths(id) {
+  const name = encodeURIComponent(id.replace(/-/g, '_'));
+  return {
+    scans: { front: `images/web/${name}.jpg`, back: `images/web/${name}_verso.jpg` },
+    thumb: `images/thumbs/${name}.jpg`
+  };
 }
 
 // For each grouped keyword, show the spelling used most often, capitalised.

@@ -5,6 +5,7 @@
 import { loadData, fold } from './data.js';
 import { createMap } from './map.js';
 import { createPanel } from './panel.js';
+import { createViewer } from './viewer.js';
 import { getLang, t, setupLanguageSwitch } from './i18n.js';
 
 // The filters shown in the panel. `values` says which filter values a card has.
@@ -28,6 +29,7 @@ let keywordLabels = new Map();
 let visibleIds = new Set();
 let loadError = null;
 
+const viewer = createViewer();
 const mapView = createMap('map', { lang: getLang(), onHover: setHovered });
 const panel = createPanel(document.getElementById('panel'), {
   facets: FACETS,
@@ -39,7 +41,8 @@ const panel = createPanel(document.getElementById('panel'), {
   },
   onClear: clearFilters,
   onSelect: (id) => select(id === state.selectedId ? null : id),
-  onHover: setHovered
+  onHover: setHovered,
+  onZoom: (id, side, sides) => viewer.open(cards.find((c) => c.id === id), side, sides)
 });
 
 setupLanguageSwitch(document.getElementById('lang-switch'), switchLanguage);

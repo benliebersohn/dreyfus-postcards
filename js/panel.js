@@ -7,7 +7,7 @@ import { t, formatDate } from './i18n.js';
 
 const KEYWORDS_SHOWN = 10; // keyword filters shown before "Show all"
 
-export function createPanel(el, { facets, onQuery, onToggleFacet, onClear, onSelect, onHover }) {
+export function createPanel(el, { facets, onQuery, onToggleFacet, onClear, onSelect, onHover, onZoom }) {
   // Build the parts that never change once, so typing and open/closed filter
   // sections aren't reset each time the list updates. Their text is filled in
   // (and re-filled on a language switch) by translatePage in i18n.js.
@@ -34,6 +34,7 @@ export function createPanel(el, { facets, onQuery, onToggleFacet, onClear, onSel
   const status = el.querySelector('.result-count');
   const clearButton = el.querySelector('.clear-filters');
   const expanded = new Set(); // facets showing all their values
+  const sideShown = new Map(); // card id -> 'front' or 'back', so a redraw keeps the side you flipped to
 
   input.addEventListener('input', () => onQuery(input.value));
   clearButton.addEventListener('click', onClear);
@@ -49,7 +50,33 @@ export function createPanel(el, { facets, onQuery, onToggleFacet, onClear, onSel
     }
     if (button.dataset.select) onSelect(button.dataset.select);
     if (button.dataset.copy) copyLink(button);
+    if (button.dataset.sidePick) {
+      const figure = button.closest('.scan');
+      sideShown.set(figure.dataset.card, button.dataset.sidePick);
+      showSide(figure, button.dataset.sidePick);
+    }
+    if (button.dataset.zoom) {
+      const figure = button.closest('.scan');
+      onZoom(figure.dataset.card, figure.dataset.side, sidesOf(figure));
+    }
   });
+
+  // A scan that doesn't exist (no file in images/) is removed; if only one
+  // side is left, the Front/Back buttons go too. (Load errors don't bubble,
+  // hence listening in the capture phase.)
+  el.addEventListener('error', (event) => {
+    const img = event.target;
+    if (!img.matches || !img.matches('.scan img')) return;
+    const figure = img.closest('.scan');
+    img.remove();
+    const left = sidesOf(figure);
+    if (!left.length) {
+      figure.remove();
+    } else if (left.length === 1) {
+      figure.querySelector('.scan-sides').remove();
+      showSide(figure, left[0]);
+    }
+  }, true);
 
   // Hovering a card in the list lights up its route on the map.
   let hoveredId = null;
@@ -84,7 +111,7 @@ export function createPanel(el, { facets, onQuery, onToggleFacet, onClear, onSel
     clearButton.hidden = !filtering;
 
     list.innerHTML = cards.length
-      ? cards.map((card) => cardHtml(card, card.id === selectedId, selection, labelFor)).join('')
+      ? cards.map((card) => cardHtml(card, card.id === selectedId, selection, labelFor, sideShown.get(card.id))).join('')
       : `<li class="empty">${t('noMatches')}</li>`;
   }
 
@@ -128,7 +155,7 @@ function unknownLast(a, b) {
 }
 
 // One card in the list; the selected card also shows its full record.
-function cardHtml(card, isSelected, selection, labelFor) {
+function cardHtml(card, isSelected, selection, labelFor, side = 'front') {
   const excerpt = card.text.length > 120 ? `${card.text.slice(0, 120).trim()}…` : card.text;
   return `
     <li class="card-item${isSelected ? ' selected' : ''}" data-id="${escapeHtml(card.id)}">
@@ -138,11 +165,11 @@ function cardHtml(card, isSelected, selection, labelFor) {
         <span class="card-route">${escapeHtml(card.origin)} → ${escapeHtml(card.destination)}</span>
         ${excerpt && !isSelected ? `<span class="card-excerpt" lang="fr">“${escapeHtml(excerpt)}”</span>` : ''}
       </button>
-      ${isSelected ? detailHtml(card, selection, labelFor) : ''}
+      ${isSelected ? detailHtml(card, selection, labelFor, side) : ''}
     </li>`;
 }
 
-function detailHtml(card, selection, labelFor) {
+function detailHtml(card, selection, labelFor, side) {
   const where = (...parts) => parts.filter((p) => p && p !== 'Unknown').join(', ');
   const fields = [
     [t('from'), card.sender, where(card.postageAddress, card.origin)],
@@ -160,6 +187,7 @@ function detailHtml(card, selection, labelFor) {
 
   return `
     <div class="card-detail">
+      ${scanHtml(card, side)}
       ${card.text ? `<blockquote lang="fr">${escapeHtml(card.text)}</blockquote>` : ''}
       <dl>
         ${fields.map(([label, value, sub]) => `
@@ -169,6 +197,30 @@ function detailHtml(card, selection, labelFor) {
       ${keywords ? `<div class="chips">${keywords}</div>` : ''}
       <button type="button" class="copy-link" data-copy="${escapeHtml(card.id)}">${t('copyLink')}</button>
     </div>`;
+}
+
+// Both sides are put on the page and CSS shows the one in data-side; any
+// side whose file is missing is removed by the error handler in createPanel.
+function scanHtml(card, side) {
+  const sides = ['front', 'back'];
+  return `
+    <figure class="scan" data-card="${escapeHtml(card.id)}" data-side="${side}">
+      <button type="button" class="scan-zoom" data-zoom="1" title="${t('enlarge')}">
+        ${sides.map((s) => `<img src="${card.scans[s]}" data-side="${s}" alt="${escapeHtml(t('scanAlt', card.id, s))}">`).join('')}
+      </button>
+      <div class="scan-sides" role="group">
+        ${sides.map((s) => `<button type="button" class="chip small" data-side-pick="${s}" aria-pressed="${s === side}">${t(s)}</button>`).join('')}
+      </div>
+    </figure>`;
+}
+
+function showSide(figure, side) {
+  figure.dataset.side = side;
+  figure.querySelectorAll('[data-side-pick]').forEach((b) => b.setAttribute('aria-pressed', b.dataset.sidePick === side));
+}
+
+function sidesOf(figure) {
+  return [...figure.querySelectorAll('img')].map((img) => img.dataset.side);
 }
 
 function copyLink(button) {

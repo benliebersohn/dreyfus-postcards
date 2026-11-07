@@ -37,6 +37,12 @@ export function createMap(elementId, { lang, onHover }) {
   }
   setLanguage(lang);
 
+  // Cards without a scan just lose their thumbnail. (Load errors don't
+  // bubble, hence listening in the capture phase.)
+  map.getContainer().addEventListener('error', (event) => {
+    if (event.target.classList && event.target.classList.contains('popup-thumb')) event.target.remove();
+  }, true);
+
   const layers = L.layerGroup().addTo(map);
   let routes = [];  // { line, hitLine, ids, count }
   let dots = [];    // { dot, ids }
@@ -128,7 +134,9 @@ export function createMap(elementId, { lang, onHover }) {
 function previewHtml(heading, cards) {
   const items = cards.map((card) => `
     <li>
-      <a href="#${encodeURIComponent(card.id)}">${escapeHtml(card.caption)}</a>
+      <a href="#${encodeURIComponent(card.id)}">
+        <img class="popup-thumb" src="${card.thumb}" alt="" loading="lazy">
+        ${escapeHtml(card.caption)}</a>
       <span class="meta">${escapeHtml(formatDate(card.dateParts))} · ${escapeHtml(card.sender)} → ${escapeHtml(card.recipient)}</span>
     </li>`).join('');
   return `<div class="card-list"><h3>${escapeHtml(heading)}</h3><ul>${items}</ul></div>`;
