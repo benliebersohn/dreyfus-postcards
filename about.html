@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title data-i18n="aboutTitle">About · Dreyfus Postcards</title>
+  <meta name="description" content="About the Dreyfus Postcards project: project statement and credits.">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="site-title">
+      <h1 data-i18n="title">Dreyfus Postcards</h1>
+      <p data-i18n="tagline">Postcards of the Dreyfus Affair, mapped by origin and destination.</p>
+    </div>
+    <nav class="site-nav">
+      <a href="index.html" data-i18n="navMap">Map</a>
+      <a href="about.html" aria-current="page" data-i18n="navAbout">About</a>
+      <button type="button" id="lang-switch" class="lang-switch"></button>
+    </nav>
+  </header>
+
+  <!-- The page text is written out in each language; js/about.js shows the
+       one matching the current language. Edit the two articles below. -->
+  <main class="about">
+    <article lang="en">
+      <h2>Project statement</h2>
+      <p>These postcards were sent during the Dreyfus Affair, and tell the stories of the people who sent them and the events they witnessed. Postcards were a popular communication tool in the late 19th and early 20th centuries, allowing people to share their experiences and connect with others across great distances. Use the map to explore these communications, and the stories they tell.</p>
+      <h2>Credits</h2>
+      <dl class="credits">
+        <dt>Project</dt>
+        <dd>Karine Mercarez - Project Lead and lead researcher, Ben Liebersohn - Developer</dd>
+        <dt>Collections</dt>
+        <dd>Postcards from various private and institutional collections</dd>
+        <dt>Map and software</dt>
+        <dd>Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors.
+          Built with <a href="https://leafletjs.com/">Leaflet</a> and
+          <a href="https://www.papaparse.com/">Papa Parse</a>.</dd>
+      </dl>
+    </article>
+
+    <article lang="fr" hidden>
+      <h2>Présentation du projet</h2>
+      <p>Ces cartes postales ont été envoyées pendant l’affaire Dreyfus, et racontent les histoires des personnes qui les ont envoyées et des événements dont elles ont été témoins. Les cartes postales étaient un outil de communication populaire à la fin du XIXe siècle et au début du XXe siècle, permettant aux gens de partager leurs expériences et de rester en contact avec leurs proches par-delà de grandes distances. Utilisez la carte pour explorer ces communications et les histoires qu’elles racontent.</p>
+
+      <h2>Crédits</h2>
+      <dl class="credits">
+        <dt>Projet</dt>
+        <dd>Karine Mercarez - Cheffe de projet et chercheuse principale, Ben Liebersohn - Développeur</dd>
+        <dt>Collections</dt>
+        <dd>Cartes postales provenant de diverses collections privées et institutionnelles</dd>
+        <dt>Carte et logiciels</dt>
+        <dd>Données cartographiques &copy; les contributeurs
+          d’<a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>.
+          Réalisé avec <a href="https://leafletjs.com/">Leaflet</a> et
+          <a href="https://www.papaparse.com/">Papa Parse</a>.</dd>
+      </dl>
+    </article>
+  </main>
+
+  <footer class="site-footer">
+    <p><a href="https://github.com/benliebersohn/dreyfus-postcards" data-i18n="source">Source on GitHub</a></p>
+  </footer>
+
+  <script type="module" src="js/about.js"></script>
+</body>
+</html>

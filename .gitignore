@@ -3,3 +3,6 @@ Thumbs.db
 .vscode/
 *.xlsx~
 ~$*
+# Full-resolution postcard scans: kept out of the repo (the site uses the
+# resized copies in images/web and images/thumbs; see scripts/resize_scans.py)
+images/KM_Postcards/

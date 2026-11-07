@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Dreyfus Postcards</title>
+  <title data-i18n="title">Dreyfus Postcards</title>
   <meta name="description" content="A map of postcards from the Dreyfus Affair (1894–1906).">
 
   <!-- Leaflet: the mapping library. Pinned to an exact version so the site never changes underneath us. -->
@@ -12,18 +12,26 @@
 </head>
 <body>
   <header class="site-header">
-    <h1>Dreyfus Postcards</h1>
-    <p>Postcards of the Dreyfus Affair, mapped by place.</p>
+    <div class="site-title">
+      <h1 data-i18n="title">Dreyfus Postcards</h1>
+      <p data-i18n="tagline">Postcards of the Dreyfus Affair, mapped by origin and destination.</p>
+    </div>
+    <nav class="site-nav">
+      <a href="index.html" aria-current="page" data-i18n="navMap">Map</a>
+      <a href="about.html" data-i18n="navAbout">About</a>
+      <!-- Switches the interface text and the basemap between English and French; see js/i18n.js -->
+      <button type="button" id="lang-switch" class="lang-switch"></button>
+    </nav>
   </header>
 
   <main>
     <!-- Search, filters and the card list; filled in by js/panel.js -->
-    <aside id="panel" aria-label="Browse the postcards"></aside>
-    <div id="map" aria-label="Map of postcards"></div>
+    <aside id="panel" aria-label="Browse the postcards" data-i18n-label="panelLabel"></aside>
+    <div id="map" aria-label="Map of postcards" data-i18n-label="mapLabel"></div>
   </main>
 
   <footer class="site-footer">
-    <p><span id="count"></span> <a href="https://github.com/benliebersohn/dreyfus-postcards">Source on GitHub</a></p>
+    <p><span id="count"></span> <a href="https://github.com/benliebersohn/dreyfus-postcards" data-i18n="source">Source on GitHub</a></p>
   </footer>
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>

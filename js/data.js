@@ -85,6 +85,7 @@ function prepareCard(row, from, to) {
     from,
     to,
     routeKey: `${from.key}|${to.key}`,
+    ...scanPaths(clean(row['Name/ID'])),
     ...cardDate(row)
   };
   card.searchText = fold([
@@ -94,20 +95,30 @@ function prepareCard(row, from, to) {
   return card;
 }
 
-// Year/Month/Day columns -> a sortable "1899-09-22" and a readable "22 Sept 1899".
+// Year/Month/Day columns -> a sortable "1899-09-22", plus the numbers so the
+// panel can show the date in the current language (see formatDate in i18n.js).
 function cardDate(row) {
   const year = parseInt(row.Year, 10);
   const month = parseInt(row.Month, 10);
   const day = parseInt(row.Day, 10);
-  if (!year) return { sortDate: '9999', displayDate: 'Undated' };
+  const dateParts = { year, month, day };
+  if (!year) return { sortDate: '9999', dateParts };
 
   const pad = (n) => String(n).padStart(2, '0');
   const sortDate = [year, month && pad(month), month && day && pad(day)].filter(Boolean).join('-');
-  if (!month) return { sortDate, displayDate: String(year) };
+  return { sortDate, dateParts };
+}
 
-  const options = { month: 'short', year: 'numeric', timeZone: 'UTC' };
-  if (day) options.day = 'numeric';
-  return { sortDate, displayDate: new Date(Date.UTC(year, month - 1, day || 1)).toLocaleDateString('en-GB', options) };
+// Scans are found by card ID, with the hyphen as an underscore: card KM-008
+// -> KM_008.jpg (front) and KM_008_verso.jpg (back, if there is one). These
+// are the resized copies made by scripts/resize_scans.py. A missing file
+// just isn't shown.
+function scanPaths(id) {
+  const name = encodeURIComponent(id.replace(/-/g, '_'));
+  return {
+    scans: { front: `images/web/${name}.jpg`, back: `images/web/${name}_verso.jpg` },
+    thumb: `images/thumbs/${name}.jpg`
+  };
 }
 
 // For each grouped keyword, show the spelling used most often, capitalised.
