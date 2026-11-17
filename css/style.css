@@ -499,3 +499,7 @@ main.about {
 .credits dd {
   margin: 0;
 }
+
+.credits dd p {
+  margin: 0 0 0.75rem;
+}
